@@ -5,7 +5,6 @@ import type { ADD_TYPE_VALUE } from "@/types";
 export interface ModalItemProps extends Omit<ModalProps, 'visible' | 'onClose'> {
     showModal: boolean;
     setShowModal: (show: boolean) => void;
-    title: React.ReactNode;
     children?: React.ReactNode;
     addType: ADD_TYPE_VALUE;
 }
