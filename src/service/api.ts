@@ -1,4 +1,5 @@
 import { AddFormValues, ADD_TYPE_VALUE, HomeDataItem } from "@/types";
+import dayjs from "dayjs";
 
 const isApiPath = (p: string) => p.startsWith('/api');
 
@@ -30,10 +31,10 @@ export const addPost = async (data: AddFormValues): Promise<unknown> => {
       body: JSON.stringify(data),
     });
 
-    if (!response.ok) {
-      console.error("addPost response not ok:", response.status, response.statusText); // 添加日志以调试响应
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
+    // if (!response.ok) {
+    //   console.error("addPost response not ok:", response.status, response.statusText); // 添加日志以调试响应
+    //   throw new Error(`HTTP error! Status: ${response.status}`);
+    // }
 
     return await response.json();
   } catch (error) {
@@ -73,7 +74,7 @@ export const getPosts = async (type?: ADD_TYPE_VALUE): Promise<{
 
 export const deletePost = async (id: number): Promise<{
   status: number;
-  message?: string;
+  message: string;
 }> => {
   try {
     const url = buildUrl(undefined, `/api/delete?id=${id}`);
@@ -81,15 +82,12 @@ export const deletePost = async (id: number): Promise<{
     const response = await fetch(url, {
       method: "DELETE",
     });
-
     if (!response.ok) {
       console.error("deletePost response not ok:", response.status, response.statusText); // 添加日志以调试响应
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-
     return await response.json();
   } catch (error) {
-    console.error("deletePost error:", error);
     return {
       status: 500,
       message: "Server Error",
@@ -97,7 +95,14 @@ export const deletePost = async (id: number): Promise<{
   }
 };
 
-export const queryHomeList = async (): Promise<{
+export const queryHomeList = async ({
+  startDate = dayjs().format('YYYY-MM-DD'),
+  endDate = dayjs().format('YYYY-MM-DD'),
+}: {
+  startDate?: string;
+  endDate: string;
+  month: string;
+}): Promise<{
   status: number;
   data: HomeDataItem[];
   message?: string;
@@ -105,13 +110,12 @@ export const queryHomeList = async (): Promise<{
   try {
     const url = buildUrl(undefined, "/api/home");
     console.log("queryHomeList URL:", url); // 添加日志以调试 URL
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      console.error("queryHomeList response not ok:", response.status, response.statusText); // 添加日志以调试响应
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    });
     return await response.json();
   } catch (error) {
     console.error("queryHomeList error:", error);

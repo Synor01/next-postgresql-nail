@@ -10,8 +10,8 @@ declare global {
 let client: MongoClient;
 
 if (!global._mongoClientPromise) {
-  client = new MongoClient(uri, options);
-  global._mongoClientPromise = client.connect();
+  // client = new MongoClient(uri, options);
+  // global._mongoClientPromise = client.connect();
 }
 const clientPromise: Promise<MongoClient> = global._mongoClientPromise;
 

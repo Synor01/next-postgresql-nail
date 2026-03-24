@@ -1,54 +1,19 @@
-// ...existing code...
 import { withApiHandler } from "@/utils/withApiHandler";
-import { error, success } from "@/utils/apiResponse";
-import clientPromise from "@/lib/mongodb";
-import { DB_NAME, COLLECTION_NAME } from "@/config/consts";
-import { v4 as uuidv4 } from 'uuid';
+import { success, error } from "@/lib/response";
+import { PostSchema } from "@/schemas/post";
 
-export const POST = withApiHandler(async (request: Request) => {
-  try {
-    if (!request) {
-      return Response.json(
-          error("params data error, please check"),
-          { status: 400 }
-      );
-    }
+import { prisma } from "@/lib/prisma";
 
-    // 安全解析 body（防止 request.json 抛错）
-    let body = {};
-    try {
-      if (typeof (request).json === 'function') {
-        body = await (request).json() || {};
-      }
-    } catch (e: unknown) {
-      console.log("🚀 ~ e:", e)
-      body = {};
-    }
-
-    const { type, amount, date, content } = body as { type?: string, amount?: number, date?: string, content?: string };
-
-    if (!type || (type === 'insight' && !content) || (type !== 'insight' && (!amount || !date))) {
-      return Response.json(
-          error("params data error, please check"),
-          { status: 400 }
-      );
-    }
-
-    const client = await clientPromise;
-    const db = client.db(DB_NAME);
-    const collection = db.collection(COLLECTION_NAME);
-    const result = await collection.insertOne({
-      type,
-      amount,
-      date,
-      content,
-      id: uuidv4(),
-    });
-    return Response.json(success({ id: result.insertedId }, '添加成功'), {
-      status: 200,
-    });
-  } catch (err: unknown) {
-    console.error('API /api/add handler error:', err);
-    return Response.json(error('新增失败'), { status: 500 });
+export const POST = withApiHandler(async (req: Request) => {
+  const body = await req.json()
+  const result = PostSchema.safeParse(body);
+  if (!result.success) {
+    return Response.json(error(result.error.issues[0].message))
   }
-});
+  const res = await prisma.post.create({
+      data: result.data,
+    })
+  return Response.json(success({ id: res.id }, '添加成功'), {
+    status: 200,
+  });
+})

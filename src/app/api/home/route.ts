@@ -1,23 +1,28 @@
-import clientPromise from "@/lib/mongodb";
-import { DB_NAME, COLLECTION_NAME } from "@/config/consts";
+import { prisma } from '@/lib/prisma'
 import { formatHomeData } from "./format";
-import { success } from "@/utils/apiResponse";
+import { success } from "@/lib/response";
+import { withApiHandler } from "@/utils/withApiHandler";
+import dayjs from 'dayjs';
 
-export const GET = async () => {
-    const client = await clientPromise;
-    const db = client.db(DB_NAME);
-    const collection = db.collection(COLLECTION_NAME);
-
-    const date = new Date().toISOString().slice(0, 10);
-    const month = new Date().toISOString().slice(0, 7);
-    const resToday = await collection.find({date}).toArray();
-    const resMonth = await collection.find({
-        date: {
-            $gte: `${month}-01`,
-            $lt: `${month}-32`,
+export const GET = withApiHandler(async (req: Request) => {
+    const day = dayjs().format('YYYY-MM-DD');
+    const month = dayjs().format('YYYY-MM');
+    const resToday = await prisma.post.findMany({
+        where: {
+            date: day
         }
-    }).toArray();
+    });
+    console.log("🚀 ~ resToday:", resToday)
+    const resMonth = await prisma.post.findMany({
+        where: {
+            date: {
+                gte: `${month}-01`,
+                lt: `${month}-32`,
+            }
+        }
+    });
+    console.log("🚀 ~ resMonth:", resMonth)
 
     const res = formatHomeData(JSON.parse(JSON.stringify(resToday)), JSON.parse(JSON.stringify(resMonth)));
     return Response.json(success(res), {status: 200});
-}
+})
