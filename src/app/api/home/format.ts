@@ -1,6 +1,8 @@
 import { AddFormValues, HomeDataItem, ADD_TYPE_VALUE } from "@/types";
 
 export const formatHomeData = (today: AddFormValues[], month: AddFormValues[]): HomeDataItem[] => {
+    console.log("🚀 ~ formatHomeData ~ month:", month)
+    console.log("🚀 ~ formatHomeData ~ today:", today)
     const todayIncome = today.filter((item) => item.type === ADD_TYPE_VALUE.ADD_INCOME).reduce((acc, cur) => acc + (cur.amount || 0), 0);
     const monthIncome = month.filter((item) => item.type === ADD_TYPE_VALUE.ADD_INCOME).reduce((acc, cur) => acc + (cur.amount || 0), 0);
     const todayReturn = today.filter((item) => item.type === ADD_TYPE_VALUE.ADD_EXPENSE).reduce((acc, cur) => acc + (cur.amount || 0), 0) || 0;

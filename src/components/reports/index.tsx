@@ -14,7 +14,7 @@ export const Reports = () => {
   const handleSolve = useCallback(async () => {
     const res = await getPosts(type);
     if (res?.status === 200) {
-      setData(res?.data?.data || [])
+      setData(res?.data || [])
     }
   }, [type])
 
