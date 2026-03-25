@@ -18,6 +18,7 @@ model User {
 
 model Post {
   id        String   @id @default(uuid())
+  authorId  String?
   content   String?
   userId    String?
   user      User?     @relation(fields: [userId], references: [id])

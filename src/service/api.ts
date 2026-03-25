@@ -1,5 +1,5 @@
 import { AddFormValues, ADD_TYPE_VALUE, HomeDataItem } from "@/types";
-import dayjs from "dayjs";
+import { request } from "@/lib/request";
 
 const isApiPath = (p: string) => p.startsWith('/api');
 
@@ -22,8 +22,7 @@ export function buildUrl(base?: string, path?: string): string {
 export const addPost = async (data: AddFormValues): Promise<unknown> => {
   try {
     const url = buildUrl(undefined, "/api/add");
-    console.log("addPost URL:", url); // 添加日志以调试 URL
-    const response = await fetch(url, {
+    const response = await request(url, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json'
@@ -31,10 +30,10 @@ export const addPost = async (data: AddFormValues): Promise<unknown> => {
       body: JSON.stringify(data),
     });
 
-    // if (!response.ok) {
-    //   console.error("addPost response not ok:", response.status, response.statusText); // 添加日志以调试响应
-    //   throw new Error(`HTTP error! Status: ${response.status}`);
-    // }
+    if (!response.ok) {
+      console.error("addPost response not ok:", response.status, response.statusText); // 添加日志以调试响应
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
 
     return await response.json();
   } catch (error) {
@@ -54,7 +53,7 @@ export const getPosts = async (type?: ADD_TYPE_VALUE): Promise<{
   try {
     const url = type ? buildUrl(undefined, `/api/detail?type=${type}`) : buildUrl(undefined, '/api/detail');
     console.log("getPosts URL:", url, type); // 添加日志以调试 URL
-    const response = await fetch(url);
+    const response = await request(url);
 
     if (!response.ok) {
       console.error("getPosts response not ok:", response.status, response.statusText); // 添加日志以调试响应
@@ -79,7 +78,7 @@ export const deletePost = async (id: number): Promise<{
   try {
     const url = buildUrl(undefined, `/api/delete?id=${id}`);
     console.log("deletePost URL:", url); // 添加日志以调试 URL
-    const response = await fetch(url, {
+    const response = await request(url, {
       method: "DELETE",
     });
     if (!response.ok) {
@@ -95,14 +94,7 @@ export const deletePost = async (id: number): Promise<{
   }
 };
 
-export const queryHomeList = async ({
-  startDate = dayjs().format('YYYY-MM-DD'),
-  endDate = dayjs().format('YYYY-MM-DD'),
-}: {
-  startDate?: string;
-  endDate: string;
-  month: string;
-}): Promise<{
+export const queryHomeList = async (): Promise<{
   status: number;
   data: HomeDataItem[];
   message?: string;
@@ -110,12 +102,13 @@ export const queryHomeList = async ({
   try {
     const url = buildUrl(undefined, "/api/home");
     console.log("queryHomeList URL:", url); // 添加日志以调试 URL
-    const response = await fetch(url, {
+    const response = await request(url, {
       method: "GET",
       headers: {
         'Content-Type': 'application/json'
       },
     });
+    console.log("🚀 ~ queryHomeList ~ response:", response)
     return await response.json();
   } catch (error) {
     console.error("queryHomeList error:", error);

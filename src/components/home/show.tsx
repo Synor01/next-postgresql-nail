@@ -1,7 +1,6 @@
 import React from 'react';
 import { queryHomeList } from '@/service/api';
 import { useQuery } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 
 export const Show = () => {
     const { data, isLoading, error } = useQuery({
@@ -32,4 +31,4 @@ export const Show = () => {
             ))}
         </div>
     );
-};
+};  
