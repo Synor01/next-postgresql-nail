@@ -17,8 +17,9 @@ export function withApiHandler(handler: (req: Request, email: string) => Promise
       }
       const resp = await handler(req, user?.email);
       return resp;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.log("🚀 ~ withApiHandler ~ err:", err)
+      // @ts-expect-error err is unknown
       return NextResponse.json({ error: err?.message }, {
         status: 500,
         headers: { 'content-type': 'application/json' },
