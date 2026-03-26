@@ -1,6 +1,6 @@
 import { signIn } from "next-auth/react";
 import { withApiHandler } from "@/utils/withApiHandler";
-import { success, error } from "@/lib/response";
+import { success } from "@/lib/response";
 
 export const POST = withApiHandler(async (req: Request) => {
     const { email, password } = await req.json();

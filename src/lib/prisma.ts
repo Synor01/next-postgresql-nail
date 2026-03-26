@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client"
-
-const globalForPrisma = global as any
-
+// @typescript-eslint no-explicit-any
+const globalForPrisma = { prisma: PrismaClient }
 export const prisma =
   globalForPrisma.prisma || new PrismaClient()
 

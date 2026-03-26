@@ -9,6 +9,7 @@ export const DELETE = withApiHandler(async (req: Request, email?: string) => {
   const res = await prisma.post.delete({
     where: {
       id,
+      authorId: email,
     }
   })
   return Response.json(success(res, '删除成功'), { status: 200 });

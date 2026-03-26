@@ -8,7 +8,6 @@ export function buildUrl(base?: string, path?: string): string {
   const safePath = path || '';
 
   if (typeof safePath !== 'string') {
-    console.error("safePath is not a string:", safePath);
     throw new Error("safePath is not a string");
   }
 
@@ -31,7 +30,6 @@ export const addPost = async (data: AddFormValues): Promise<unknown> => {
     });
 
     if (!response.ok) {
-      console.error("addPost response not ok:", response.status, response.statusText); // 添加日志以调试响应
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
@@ -52,7 +50,6 @@ export const getPosts = async (type?: ADD_TYPE_VALUE): Promise<{
 }> => {
   try {
     const url = type ? buildUrl(undefined, `/api/detail?type=${type}`) : buildUrl(undefined, '/api/detail');
-    console.log("getPosts URL:", url, type); // 添加日志以调试 URL
     const response = await request(url);
 
     if (!response.ok) {
@@ -77,16 +74,15 @@ export const deletePost = async (id: number): Promise<{
 }> => {
   try {
     const url = buildUrl(undefined, `/api/delete?id=${id}`);
-    console.log("deletePost URL:", url); // 添加日志以调试 URL
     const response = await request(url, {
       method: "DELETE",
     });
     if (!response.ok) {
-      console.error("deletePost response not ok:", response.status, response.statusText); // 添加日志以调试响应
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     return await response.json();
-  } catch (error) {
+  } catch (error: unknown) {
+    console.log("🚀 ~ deletePost ~ error:", error)
     return {
       status: 500,
       message: "Server Error",
@@ -101,7 +97,6 @@ export const queryHomeList = async (): Promise<{
 }> => {
   try {
     const url = buildUrl(undefined, "/api/home");
-    console.log("queryHomeList URL:", url); // 添加日志以调试 URL
     const response = await request(url, {
       method: "GET",
       headers: {
