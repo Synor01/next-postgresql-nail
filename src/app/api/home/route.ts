@@ -6,12 +6,15 @@ import { withApiHandler } from "@/utils/withApiHandler";
 import dayjs from 'dayjs';
 
 export const GET = withApiHandler(async (req: Request, email) => {
-    console.log("🚀 ~ email:", email)
-    const day = dayjs().format('YYYY-MM-DD');
-    const month = dayjs().format('YYYY-MM');
+    const today = dayjs().format('YYYY-MM-DD')
+    const start = dayjs().startOf("month").format("YYYY-MM-DD")
+    const end = dayjs().endOf("month").format("YYYY-MM-DD")
+    if (!email) {
+        return Response.json(error("unauthorized"), { status: 402 })
+    }
     const resToday = await prisma.post.findMany({
         where: {
-            date: day,
+            date: today,
             authorId: email,
         }
     });
@@ -22,13 +25,13 @@ export const GET = withApiHandler(async (req: Request, email) => {
     const resMonth = await prisma.post.findMany({
         where: {
             date: {
-                gte: `${month}-01`,
-                lt: `${month}-32`,
+                gte: start,
+                lte: end,
             },
             authorId: email,
         }
     });
 
-    const res = formatHomeData(JSON.parse(JSON.stringify(resToday)), JSON.parse(JSON.stringify(resMonth)));
+    const res = formatHomeData(resToday, resMonth);
     return Response.json(success(res), {status: 200});
 })
