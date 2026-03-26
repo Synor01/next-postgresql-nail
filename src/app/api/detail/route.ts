@@ -10,7 +10,7 @@ export const GET = withApiHandler(async (request: Request, email: string) => {
   const res = await prisma.post.findMany({
     where: {
       type,
-      authId: email,
+      authorId: email,
     }
   })
   if (res.length && res[0].authorId !== email) {
