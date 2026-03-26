@@ -108,7 +108,6 @@ export const queryHomeList = async (): Promise<{
         'Content-Type': 'application/json'
       },
     });
-    console.log("🚀 ~ queryHomeList ~ response:", response)
     return await response.json();
   } catch (error) {
     console.error("queryHomeList error:", error);

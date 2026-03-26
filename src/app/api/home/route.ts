@@ -11,20 +11,21 @@ export const GET = withApiHandler(async (req: Request, email) => {
     const month = dayjs().format('YYYY-MM');
     const resToday = await prisma.post.findMany({
         where: {
-            date: day
+            date: day,
+            authorId: email,
         }
     });
-    console.log("🚀 ~ resToday:", resToday)
     // jwt鉴权
     if (resToday?.length && resToday[0].authorId !== email) {
-        return Response.json(error("unLogin"), {status: 401});
+        return Response.json(error("auth error"), {status: 402});
     }
     const resMonth = await prisma.post.findMany({
         where: {
             date: {
                 gte: `${month}-01`,
                 lt: `${month}-32`,
-            }
+            },
+            authorId: email,
         }
     });
 

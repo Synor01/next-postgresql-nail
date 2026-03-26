@@ -1,3 +1,4 @@
+import 'antd-mobile/es/global'
 import "./globals.css";
 import { Toaster } from 'react-hot-toast';
 

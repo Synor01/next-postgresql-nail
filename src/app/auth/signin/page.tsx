@@ -3,19 +3,11 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { getCurrentUser } from "@/lib/user";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
-
-  const user = getCurrentUser();
-  console.log("🚀 ~ SignInPage ~ user:", user)
-  
-  // if (!user) {
-  //   router.push("/");
-  // }
 
   const handleLogin = async () => {
     const res = await signIn("credentials", {
